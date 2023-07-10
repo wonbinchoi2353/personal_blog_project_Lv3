@@ -84,4 +84,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// 로그아웃
+router.delete('/logout', (req, res) => {
+  // 쿠키 확인
+  const { authorization } = req.cookies;
+  try {
+    // 쿠키 없으면 에러 메세지 전송
+    if (!authorization) {
+      return res.status(401).json({ errorMessage: '로그인이 되어있지 않습니다.' });
+    }
+    // 쿠키 있으면 삭제
+    res.clearCookie('authorization');
+    res.status(200).json({ message: '로그아웃 되었습니다.' });
+  } catch (error) {
+    res.status(400).json({ errorMessage: error.message });
+  }
+});
+
 module.exports = router;
