@@ -58,13 +58,13 @@ router.post('/signup', async (req, res) => {
 
 // 로그인
 router.post('/login', async (req, res) => {
-  const { nickname, email, password } = req.body;
-  // email, nickname으로 user 존재 확인
+  const { email, nickname, password } = req.body;
+  // email 또는 nickname 중 하나로 로그인
   let user;
-  if (nickname) {
-    user = await Users.findOne({ where: { nickname } });
-  } else if (email) {
+  if (email) {
     user = await Users.findOne({ where: { email } });
+  } else if (nickname) {
+    user = await Users.findOne({ where: { nickname } });
   } else {
     return res.status(403).json({ errorMessage: '닉네임 또는 이메일을 입력해주세요.' });
   }
