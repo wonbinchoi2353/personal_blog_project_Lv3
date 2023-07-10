@@ -2,8 +2,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { Users, UserInfos } = require('../models');
 const router = express.Router();
-require('dotenv').config();
-const env = process.env;
+require('dotenv').config(); // env 환경변수
+const env = process.env; // env 환경변수
 
 // 회원가입
 router.post('/signup', async (req, res) => {
