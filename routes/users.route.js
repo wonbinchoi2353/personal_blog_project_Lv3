@@ -53,7 +53,7 @@ router.post('/signup', async (req, res) => {
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (error) {
     res.status(400).json({ errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' });
-    console.log(error.errorMessage);
+    console.log('errorMessage ' + error.Message);
   }
 });
 
@@ -77,12 +77,12 @@ router.post('/login', async (req, res) => {
 
   try {
     // email, password 맞을 때 실행, userId를 token에 저장
-    const token = jwt.sign({ userId: user.userId }, env.JWT_KEY_NAME);
+    const token = jwt.sign({ userId: user.userId, exp: +10 }, env.JWT_KEY_NAME);
     res.cookie('authorization', `Bearer ${token}`);
     return res.status(200).json({ message: '로그인 성공' });
   } catch (error) {
     res.status(400).json({ errorMessage: '로그인에 실패하였습니다.' + error.message });
-    console.log(error.errorMessage);
+    console.log('errorMessage ' + error.Message);
   }
 });
 
@@ -99,8 +99,8 @@ router.delete('/logout', (req, res) => {
     res.clearCookie('authorization');
     res.status(200).json({ message: '로그아웃 되었습니다.' });
   } catch (error) {
-    res.status(400).json({ errorMessage: error.message });
-    console.log(error.errorMessage);
+    res.status(400).json({ errorMessage: '잘못된 요청입니다.' });
+    console.log('errorMessage ' + error.Message);
   }
 });
 
