@@ -77,7 +77,7 @@ router.post('/login', async (req, res) => {
 
   try {
     // email, password 맞을 때 실행, userId를 token에 저장
-    const token = jwt.sign({ userId: user.userId, exp: +10 }, env.JWT_KEY_NAME);
+    const token = jwt.sign({ userId: user.userId }, env.JWT_KEY_NAME, { expiresIn: '10s' });
     res.cookie('authorization', `Bearer ${token}`);
     return res.status(200).json({ message: '로그인 성공' });
   } catch (error) {
