@@ -35,7 +35,7 @@ module.exports = async (req, res, next) => {
 
     next();
   } catch (error) {
-    // 쿠키가 만료된 경우
+    // 쿠키가 만료된 경우, *이렇게 쓰는 게 아닌 거 같음
     if (error instanceof jwt.TokenExpiredError) {
       res.clearCookie('authorization');
       return res.status(403).json({ errorMessage: '전달된 쿠키에서 오류가 발생하였습니다.' });
