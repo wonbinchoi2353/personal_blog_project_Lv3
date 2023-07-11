@@ -1,7 +1,8 @@
 const express = require('express');
+const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { Users, UserInfos } = require('../models');
-const router = express.Router();
+const authMiddleware = require('../middlewares/auth-middleware');
 require('dotenv').config(); // env 환경변수
 const env = process.env; // env 환경변수
 
@@ -83,7 +84,7 @@ router.post('/login', async (req, res) => {
 
   try {
     // email, password 맞을 때 실행, userId를 token에 저장
-    const token = jwt.sign({ userId: user.userId }, env.JWT_KEY_NAME, { expiresIn: '10s' });
+    const token = jwt.sign({ userId: user.userId }, env.JWT_KEY_NAME, { expiresIn: '2m' });
     res.cookie('authorization', `Bearer ${token}`);
     return res.status(200).json({ message: '로그인 성공' });
   } catch (error) {
@@ -104,6 +105,32 @@ router.delete('/logout', (req, res) => {
     // 쿠키 있으면 삭제
     res.clearCookie('authorization');
     res.status(200).json({ message: '로그아웃 되었습니다.' });
+  } catch (error) {
+    res.status(400).json({ errorMessage: '잘못된 요청입니다.' });
+    console.log('errorMessage: ' + error.message);
+  }
+});
+
+// 회원탈퇴
+router.delete('/signout', authMiddleware, async (req, res) => {
+  const { authorization } = req.cookies;
+  const { password } = req.body;
+  const { userId } = res.locals.user;
+
+  if (!authorization) {
+    return res.status(401).json({ errorMessage: '로그인 되어있지 않습니다.' });
+  }
+
+  const user = await Users.findByPk(userId);
+
+  // 입력한 비밀번호와 데이터 베이스의 비밀번호 비교
+  if (user.password !== password) {
+    return res.status(401).json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
+  }
+
+  try {
+    await Users.destroy({ where: { userId } });
+    res.status(200).json({ message: '회원탈퇴가 완료되었습니다.' });
   } catch (error) {
     res.status(400).json({ errorMessage: '잘못된 요청입니다.' });
     console.log('errorMessage: ' + error.message);
