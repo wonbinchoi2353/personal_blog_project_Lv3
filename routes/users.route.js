@@ -48,7 +48,13 @@ router.post('/signup', async (req, res) => {
     // 새로운 유저 추가
     const user = await Users.create({ email, nickname, password });
     // 새로운 유저 정보 추가, Users와 같은 userId 공유 (onDelete: cascade 하기 위해)
-    await UserInfos.create({ userId: user.userId, name, age, gender: gender.toUpperCase(), profileImage });
+    await UserInfos.create({
+      userId: user.userId,
+      name,
+      age,
+      gender: gender.toUpperCase(),
+      profileImage,
+    });
 
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (error) {
