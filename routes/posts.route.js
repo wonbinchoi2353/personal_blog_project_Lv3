@@ -108,5 +108,35 @@ router.patch('/posts/:postId', authMiddleware, async (req, res) => {
 });
 
 // 게시글 삭제
+router.delete('/posts/:postId', authMiddleware, async (req, res) => {
+  const { postId } = req.params;
+  const { userId } = res.locals.user;
+
+  const post = await Posts.findByPk(postId);
+
+  // 게시글 존재 확인
+  if (!post) {
+    return res.status(404).json({ errorMessage: '게시글이 존재하지 않습니다.' });
+  }
+
+  // 로그인 된 userId와 데이터 베이스의 userId 비교
+  if (userId !== post.userId) {
+    return res.status(403).json({ errorMessage: '게시글의 삭제 권한이 존재하지 않습니다.' });
+  }
+
+  try {
+    await Posts.destroy({ where: { postId } });
+    const verifyPost = await Posts.findOne({ where: { postId } });
+    // 게시물 삭제에 실패한 경우
+    if (verifyPost) {
+      return res.status(401).json({ errorMessage: '게시글이 정상적으로 삭제되지 않았습니다.' });
+    }
+
+    res.status(200).json({ message: '게시글을 삭제하였습니다.' });
+  } catch (error) {
+    res.status(400).json({ errorMessage: '게시글 삭제에 실패하였습니다.' });
+    console.log('errorMessage: ' + error.message);
+  }
+});
 
 module.exports = router;
