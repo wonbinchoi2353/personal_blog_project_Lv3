@@ -1,6 +1,5 @@
 const express = require('express');
-const { Posts } = require('../models');
-const { Users } = require('../models');
+const { Users, Posts } = require('../models');
 const authMiddleware = require('../middlewares/auth-middleware');
 const router = express.Router();
 
@@ -36,7 +35,7 @@ router.get('/posts', async (_, res) => {
       // join할 테이블과 별명, 응답할 속성
       include: [{ model: Users, as: 'user', attributes: ['nickname'] }],
       // createdAt 기준으로 나열
-      order: [['createdAt', 'desc']],
+      order: [['createdAt', 'DESC']],
     });
     res.status(200).json({ posts });
   } catch (error) {
@@ -141,5 +140,3 @@ router.delete('/posts/:postId', authMiddleware, async (req, res) => {
     console.log('errorMessage: ' + error.message);
   }
 });
-
-module.exports = router;
