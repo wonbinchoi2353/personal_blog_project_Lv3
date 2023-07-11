@@ -63,6 +63,49 @@ router.get('/posts/:postId', async (req, res) => {
 });
 
 // 게시글 수정
+router.patch('/posts/:postId', authMiddleware, async (req, res) => {
+  const { postId } = req.params;
+  const { title, content } = req.body;
+  const { userId } = res.locals.user;
+
+  if (Object.keys(req.body).length === 0) {
+    return res.status(412).json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+  } else if (title === '') {
+    return res.status(412).json({ errorMessage: '게시글 제목의 형식이 일치하지 않습니다.' });
+  } else if (content === '') {
+    return res.status(412).json({ errorMessage: '게시글 내용의 형식이 일치하지 않습니다.' });
+  }
+
+  // 프라이머리 키로 게시물 가져오기
+  const post = await Posts.findByPk(postId);
+
+  // 로그인 된 userId와 게시글의 userId 비교
+  if (userId !== post.userId) {
+    return res.status(403).json({ errorMessage: '게시물 수정의 권한이 존재하지 않습니다.' });
+  }
+
+  // 수정된 내용이 없으면 오류 메세지 보내기
+  if (post.title === title && post.content === content) {
+    return res.status(401).json({ errorMessage: '게시글이 정상적으로 수정되지 않았습니다.' });
+  }
+
+  // title, content 수정할 것만 수정하기
+  if (title) {
+    post.title = title;
+  }
+
+  if (content) {
+    post.content = content;
+  }
+
+  try {
+    await post.save();
+    res.status(200).json({ message: '게시글을 수정하였습니다.' });
+  } catch (error) {
+    res.status(400).json({ errorMessage: '게시글 수정에 실패하였습니다.' });
+    console.log('errorMessage: ' + error.message);
+  }
+});
 
 // 게시글 삭제
 
