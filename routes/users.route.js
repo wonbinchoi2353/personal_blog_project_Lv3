@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
     res.cookie('authorization', `Bearer ${token}`);
     return res.status(200).json({ message: '로그인 성공' });
   } catch (error) {
-    res.status(400).json({ errorMessage: '로그인에 실패하였습니다.' + error.message });
+    res.status(400).json({ errorMessage: '로그인에 실패하였습니다.' });
     console.log('errorMessage: ' + error.message);
   }
 });
