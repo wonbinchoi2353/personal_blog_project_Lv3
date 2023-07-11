@@ -53,7 +53,7 @@ router.post('/signup', async (req, res) => {
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (error) {
     res.status(400).json({ errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' });
-    console.log('errorMessage ' + error.message);
+    console.log('errorMessage: ' + error.message);
   }
 });
 
@@ -82,7 +82,7 @@ router.post('/login', async (req, res) => {
     return res.status(200).json({ message: '로그인 성공' });
   } catch (error) {
     res.status(400).json({ errorMessage: '로그인에 실패하였습니다.' + error.message });
-    console.log('errorMessage ' + error.message);
+    console.log('errorMessage: ' + error.message);
   }
 });
 
@@ -100,7 +100,7 @@ router.delete('/logout', (req, res) => {
     res.status(200).json({ message: '로그아웃 되었습니다.' });
   } catch (error) {
     res.status(400).json({ errorMessage: '잘못된 요청입니다.' });
-    console.log('errorMessage ' + error.message);
+    console.log('errorMessage: ' + error.message);
   }
 });
 
