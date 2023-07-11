@@ -93,7 +93,7 @@ router.delete('/logout', (req, res) => {
   try {
     // 쿠키 없으면 에러 메세지 전송
     if (!authorization) {
-      return res.status(401).json({ errorMessage: '로그인이 되어있지 않습니다.' });
+      return res.status(401).json({ errorMessage: '로그인 되어있지 않습니다.' });
     }
     // 쿠키 있으면 삭제
     res.clearCookie('authorization');
