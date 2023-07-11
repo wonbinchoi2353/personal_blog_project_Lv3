@@ -26,6 +26,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      like: {
+        allowNull: false,
+        defaultValue: 0,
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         defaultValue: Sequelize.fn('now'),

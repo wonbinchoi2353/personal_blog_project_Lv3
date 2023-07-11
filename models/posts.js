@@ -10,7 +10,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate({ Users, Comments }) {
       // define association here
       this.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
-      this.hasMany(Comments, { foreignKey: 'postId', as: 'comments', onDelete: 'cascade', hooks: true });
+      this.hasMany(Comments, {
+        foreignKey: 'postId',
+        as: 'comments',
+        onDelete: 'cascade',
+        hooks: true,
+      });
     }
   }
   Posts.init(
@@ -32,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         allowNull: false,
         type: DataTypes.STRING,
+      },
+      like: {
+        allowNull: false,
+        defaultValue: 0,
+        type: DataTypes.INTEGER,
       },
       createdAt: {
         allowNull: false,
