@@ -1,5 +1,5 @@
 const express = require('express');
-const { Posts, Comments } = require('../models');
+const { Users, Posts, Comments } = require('../models');
 const authMiddleware = require('../middlewares/auth-middleware');
 const router = express.Router();
 
@@ -30,6 +30,28 @@ router.post('/posts/:postId/comments', authMiddleware, async (req, res) => {
 });
 
 // 댓글 목록 조회
+router.get('/posts/:postId/comments', async (req, res) => {
+  const { postId } = req.params;
+
+  const post = await Posts.findByPk(postId);
+
+  if (!post) {
+    return res.status(404).json({ errorMessage: '게시글이 존재하지 않습니다.' });
+  }
+
+  try {
+    const comments = await Comments.findAll({
+      attributes: ['commentId', 'userId', 'comment', 'createdAt', 'updatedAt'],
+      include: [{ model: Users, as: 'user', attributes: ['nickname'] }],
+      order: [['createdAt', 'desc']],
+    });
+
+    res.status(200).json({ comments });
+  } catch (error) {
+    res.status(400).json({ errorMessage: '댓글 조회에 실패하였습니다.' });
+    console.log('errorMessage: ' + error.message);
+  }
+});
 
 // 댓글 수정
 
