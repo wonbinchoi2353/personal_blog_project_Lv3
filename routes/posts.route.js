@@ -126,7 +126,10 @@ router.delete('/posts/:postId', authMiddleware, async (req, res) => {
 
   try {
     await Posts.destroy({ where: { postId } });
+
+    // 삭제 후 post로 확인하면 아직 변수에는 남아있어서 데이터 베이스 확인
     const verifyPost = await Posts.findOne({ where: { postId } });
+
     // 게시물 삭제에 실패한 경우
     if (verifyPost) {
       return res.status(401).json({ errorMessage: '게시글이 정상적으로 삭제되지 않았습니다.' });
