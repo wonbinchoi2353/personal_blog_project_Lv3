@@ -1,5 +1,5 @@
 const express = require('express');
-const { Users, Posts } = require('../models');
+const { Posts, Likes } = require('../models');
 const authMiddleware = require('../middlewares/auth-middleware');
 const router = express.Router();
 
@@ -19,9 +19,15 @@ router.put('/posts/:postId/like', authMiddleware, async (req, res) => {
   }
 
   try {
-    // 좋아요 증가 increment, 감소 decrement, Sequelize.literal, 세기 count
-    // 내 게시글, 댓글에는 좋아요 X
-    await Posts.update({});
+    const like = await Likes.findOne({ where: { userId } });
+    console.log(like);
+    if (!like) {
+      await Likes.create({ userId, postId });
+      return res.status(200).json({ message: '게시글의 좋아요를 등록하였습니다.' });
+    } else if (like) {
+      await Likes.destroy({ where: { userId, postId } });
+      return res.status(200).json({ message: '게시글의 좋아요를 취소하였습니다.' });
+    }
   } catch (error) {
     res.status(400).json({ errorMessage: '게시글 좋아요에 실패하였습니다.' });
     console.log('errorMessage: ' + error.message);
