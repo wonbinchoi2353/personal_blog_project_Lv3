@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'cascade',
         hooks: true,
       });
-      this.belongsToMany(Users, { through: Likes });
+      this.hasMany(Likes, { foreignKey: 'postId', as: 'likes' });
     }
   }
   Posts.init(
