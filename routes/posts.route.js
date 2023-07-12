@@ -1,5 +1,5 @@
 const express = require('express');
-const { Users, Posts } = require('../models');
+const { Users, Posts, Sequelize, Likes } = require('../models');
 const authMiddleware = require('../middlewares/auth-middleware');
 const router = express.Router();
 
@@ -31,11 +31,24 @@ router.get('/posts', async (_, res) => {
   try {
     const posts = await Posts.findAll({
       // 응답할 속성들
-      attributes: ['postId', 'userId', 'title', 'createdAt', 'updatedAt'],
+      attributes: [
+        'postId',
+        'userId',
+        'title',
+        'createdAt',
+        'updatedAt',
+        // fn 쿼리 메서드 사용할 수 있게 하는 시퀄라이즈 함수, likes as 사용
+        [Sequelize.fn('COUNT', Sequelize.col('likes.likeId')), 'likesCount'],
+      ],
       // join할 테이블과 별명, 응답할 속성
-      include: [{ model: Users, as: 'user', attributes: ['nickname'] }],
-      // createdAt 기준으로 나열
+      include: [
+        { model: Users, as: 'user', attributes: ['nickname'] },
+        { model: Likes, as: 'likes', attributes: [] },
+      ],
+      // createdAt 기준으로 내림차순
       order: [['createdAt', 'DESC']],
+      // 같은 컬럼 묶기
+      group: ['Posts.postId'],
     });
     res.status(200).json({ posts });
   } catch (error) {
@@ -140,3 +153,5 @@ router.delete('/posts/:postId', authMiddleware, async (req, res) => {
     console.log('errorMessage: ' + error.message);
   }
 });
+
+module.exports = router;
