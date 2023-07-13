@@ -20,7 +20,6 @@ router.put('/posts/:postId/like', authMiddleware, async (req, res) => {
 
   try {
     const like = await Likes.findOne({ where: { userId } });
-    console.log(like);
     if (!like) {
       await Likes.create({ userId, postId });
       return res.status(200).json({ message: '게시글의 좋아요를 등록하였습니다.' });
